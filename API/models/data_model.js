@@ -1,14 +1,30 @@
 const mongoose = require("mongoose");
 
-const pulsi_data_schema = new mongoose.Schema({
+const raw_data_schema = new mongoose.Schema({
+
+    timestamp: { type: string, default: Date.now },
+    raw_data: { type: string, required: true },
+
+});
+
+const processed_data_schema = new mongoose.Schema({
+
+    timestamp: { type: string, default: Date.now },
+    oxygen_level: { type: Number, required: true },
+    pulse_rate: { type: Number, required: true },
+
+});
+
+
+const pulsi_schema = new mongoose.Schema({
 
     pulsi_ID: { type: String, required: true },
-    raw_data: { type: String, required: true },
-    processed_data: { type: Object, required: true },
-    timestamp: { type: Date, default: Date.now },
+    raw_data: raw_data_schema,
+    processed_data: processed_data_schema,
+    timestamp: {type: Date, default: raw_data.timestamp},
 
 })
 
-const pulsi_data_model = mongoose.model("pulsi_data", pulsi_data_schema);
+const pulsi_model = mongoose.model("pulsi_data", pulsi_schema);
 
-module.exports = pulsi_data_model;
+module.exports = pulsi_model;
