@@ -1,7 +1,7 @@
 import express from 'express';
 // const mongoose = require("mongoose");
 
-const app = require("./app");
+import app from "./app";
 
 
 const port = 3000;
@@ -22,11 +22,10 @@ app.use(express.json());
 //   })
 //   .catch((err) => {
 //     console.error("Error al conectar a la base de datos", err);
-//   });
-
+//   });SS
 
       // Define tus rutas aquí
-    app.get("/", (req, res) => {
+    app.get("/", (req: any, res: any) => {
       res.send("¡Hola, mundo!");
     });
 
