@@ -1,4 +1,4 @@
-const express = require("express");
+import express from 'express';
 // const mongoose = require("mongoose");
 
 const app = require("./app");

@@ -1,4 +1,4 @@
-const pulsi_model = require("../models/data_model");
+import { pulsi_model, IPulsi } from "../models/pulsi_model";
 
 
 const controller = {
