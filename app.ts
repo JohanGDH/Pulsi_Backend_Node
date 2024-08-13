@@ -2,6 +2,8 @@
 import cors from 'cors';
 import express from 'express';
 
+import dataRouter from './API/routes/data_router';
+
 const app = express();
 
 app.use(cors());
@@ -15,5 +17,7 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     next();
 })
+
+app.use('/api', dataRouter);
 
 export default app;

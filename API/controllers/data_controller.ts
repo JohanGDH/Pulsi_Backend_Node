@@ -1,5 +1,5 @@
 // Import any required modules or models
-import { NextFunction, Request, Response } from "express";
+  import { NextFunction, Request, Response } from "express";
 
 import  {    raw_data_schema, 
             processed_data_schema, 
@@ -9,9 +9,15 @@ import  {    raw_data_schema,
 import { pulsi_model } from '../models/pulsi_model';
 import { nextTick } from "process";
 
-const handleError = (res: Response, err: any, message: string) => {
-  console.error(err);
-  res.status(500).send({ message });
+// Función de validación
+const validateParams = (params: any): boolean => {
+  return (
+    params &&
+    typeof params.pulsi_ID === 'string' &&
+    typeof params.raw_data === 'string' &&
+    typeof params.processed_data === 'string' &&
+    typeof params.timestamp === 'string' // O el tipo que corresponda, por ejemplo, 'number' si es un timestamp numérico
+  );
 };
         
 
@@ -25,14 +31,14 @@ const controller = {
   },
 
   createData: (req: Request, res: Response, next: NextFunction) => {
+    
     // Implement your logic to create new data
     const new_data = new pulsi_model();
     const params = req.body;
 
-    new_data.pulsi_ID = params.pulsi_ID;
-    new_data.raw_data = params.raw_data;
-    new_data.processed_data = params.processed_data;
-    new_data.timestamp = params.timestamp;
+    if(!validateParams(params)) {
+      return res.status(400).send({ message: "Los datos del pulsi son requeridos" });
+    }
 
     new_data
       .save()

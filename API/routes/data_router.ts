@@ -1,10 +1,10 @@
 import express, { Request, Response, Router } from "express";
 
-import { controller as DataController } from "../controllers/data_controller";
+import { controller as dataController } from "../controllers/data_controller";
 
-const router: Router = express.Router();
+const dataRouter: Router = express.Router();
 
 // Rutas para la entidad Data
-router.post("/data",DataController.createData);
+dataRouter.post("/data", dataController.createData);
 
-export default router;
+export default dataRouter;
