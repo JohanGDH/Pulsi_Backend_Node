@@ -15,16 +15,7 @@ const processed_data_schema = new mongoose.Schema({
 
 });
 
+const raw_data_model = mongoose.model("raw_data", raw_data_schema);
+const processed_data_model = mongoose.model("processed_data", processed_data_schema);
 
-const pulsi_schema = new mongoose.Schema({
-
-    pulsi_ID: { type: String, required: true },
-    raw_data: raw_data_schema,
-    processed_data: processed_data_schema,
-    timestamp: {type: Date, default: raw_data.timestamp},
-
-})
-
-const pulsi_model = mongoose.model("pulsi_data", pulsi_schema);
-
-module.exports = pulsi_model;
+module.exports = raw_data_model, processed_data_model;

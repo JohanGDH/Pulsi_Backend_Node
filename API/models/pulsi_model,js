@@ -1,0 +1,15 @@
+const mongoose = require("mongoose");
+const  raw_data_schema  = require("./data_model.js");
+const  processed_data_schema  = require("./data_model.js");
+
+
+const pulsi_schema = new mongoose.Schema({
+  pulsi_ID: { type: String, required: true },
+  raw_data: raw_data_schema,
+  processed_data: processed_data_schema,
+  timestamp: { type: Date, default: raw_data.timestamp },
+});
+
+const pulsi_model = mongoose.model("pulsi", pulsi_schema);
+
+exports.pulsi_model = pulsi_model;
