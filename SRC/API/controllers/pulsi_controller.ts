@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { pulsi_model, IPulsi } from "../models/pulsi_model";
+import  mqtt_client  from "../services/mqtt_service";
 
 
 const controller = {
@@ -70,6 +71,7 @@ const controller = {
                       pulsi,
                       message: "Pulsi guardado correctamente",
                     });
+                    mqtt_client.subscribeToTopic(pulsi.pulsi_ID);
                 })
                 .catch((err) => {
                     next(err);
@@ -116,6 +118,8 @@ const controller = {
                 if (!deletedPulsi) {
                     return res.status(404).send({ message: "No se han encontrado los datos" });
                 }
+
+                mqtt_client.unSubscribeToTopic(deletedPulsi.pulsi_ID);
                 return res.status(200).send({
                     deletedPulsi,
                     message: "Datos eliminados correctamente",
@@ -124,7 +128,25 @@ const controller = {
             .catch((err) => {
                 next(err);
             });
+    },
+
+    connectToPulsi: (req: Request, res: Response, next: NextFunction) => {
+        
+        const pulsi_ID = req.params.pulsi_ID;
+
+        if (!pulsi_ID) {
+            return res.status(400).send({ message: "El ID pulsi es requerido" });
+        }
+
+        try {
+            mqtt_client.subscribeToTopic(pulsi_ID);
+            res.status(200).send({ message: "Conectado al pulsi correctamente" });
+        }
+        catch (err) {
+            next(err);
+        }
     }
+
 }
 
 export { controller };

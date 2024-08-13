@@ -4,7 +4,7 @@ import express from 'express';
 import app from "./app";
 
 
-const port = 3000;
+const port = 3030;
 
 // URL de conexión a MongoDB
 const url = "mongodb://localhost:27017/pulsi_db";
