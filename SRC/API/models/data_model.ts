@@ -29,4 +29,4 @@ const processed_data_schema = new mongoose.Schema(
   { _id: false }
 );
 
-export { raw_data_schema, processed_data_schema, IRawData, IProcessedData };
+export { raw_data_schema, processed_data_schema, IRawData, IProcessedData};

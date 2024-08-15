@@ -1,5 +1,8 @@
 import client from "../../mqtt_client";
+
+import { DataBuffer } from "../models/pulsi_model";
 import { IPulsi } from "../models/pulsi_model";
+import { controller as dataController } from "../controllers/data_controller";
 
 const mqtt_client = {
   subscribeToTopic: (pulsiID: IPulsi["pulsi_ID"]) => {
@@ -48,6 +51,48 @@ const mqtt_client = {
       console.log("Conexión MQTT finalizada");
     });
   },
+
+
+  addDataToBuffer: (topic: IPulsi['pulsi_ID'] ,message: Buffer, dataBuffer: DataBuffer) => {
+
+    const data = JSON.parse(message.toString());
+    const pulsiID = topic;
+
+    if (!dataBuffer[pulsiID]) {
+      
+        dataBuffer[pulsiID] = {
+          raw_data: [data.raw_data],
+          processed_data: [data.processed_data],
+        }
+      
+    } else {
+      dataBuffer[pulsiID].raw_data.push(data.raw_data);
+      dataBuffer[pulsiID].processed_data.push(data.processed_data);
+    }
+    
+    return dataBuffer;
+  },
+
+  processBuffer: (dataBuffer: DataBuffer) => {
+
+    if (Object.keys(dataBuffer).length >= 50) {
+
+      for (const pulsiID in dataBuffer) {
+        const data = dataBuffer[pulsiID];
+        const raw_data = data.raw_data;
+        const processed_data = data.processed_data;
+
+        // Procesar datos
+        dataController.addData(pulsiID, raw_data, processed_data);    
+
+
+        // Limpiar buffer
+        delete dataBuffer[pulsiID];
+      }
+    }
+  }
+
+
 };
 
 export default mqtt_client;

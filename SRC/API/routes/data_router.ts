@@ -8,6 +8,6 @@ const dataRouter: Router = express.Router();
 // Rutas para la entidad Data
 dataRouter.get("/", dataController.getData)
 dataRouter.post("/", dataController.createData);
-dataRouter.put("/", dataController.addData);
+dataRouter.put("/", dataController.addDataFromRequest);
 
 export default dataRouter;

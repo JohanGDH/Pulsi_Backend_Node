@@ -67,29 +67,22 @@ const controller = {
       });
   },
 
-  addData: (req: Request, res: Response, next: NextFunction) => {
-    
+
+
+  addDataFromRequest: (req: Request, res: Response, next: NextFunction) => {
     const params = req.body;
 
-
-    if(!validateParams(params)) {
-      return res.status(400).send({ message: "Los datos del pulsi son requeridos" });
+    if (!validateParams(params)) {
+        return res.status(400).send({ message: "Los datos del pulsi son requeridos" });
     }
 
+    const pulsi_ID = params.pulsi_ID;
+    const raw_data = params.raw_data;
+    const processed_data = params.processed_data;
 
-    pulsi_model.findOneAndUpdate({ 
-      pulsi_ID: params.pulsi_ID 
-    }, {
-      $push: {
-        raw_data:{ $each :params.raw_data},
-        processed_data: {$each: params.processed_data},
-      }
-    }, {
-      new: true,
-      runValidators: true,
-    })
+    controller
+      .addData(pulsi_ID, raw_data, processed_data)
       .then((updatedPulsi: IPulsi | any) => {
-        
         if (!updatedPulsi) {
           return res
             .status(404)
@@ -106,9 +99,27 @@ const controller = {
           message: "Datos actualizados correctamente",
         });
       })
-      .catch((err) => {
+      .catch((err:any) => {
         next(err);
-    })
+      });
+  },
+
+
+  addData: (pulsi_ID: string, raw_data: IRawData[], processed_data: IProcessedData[]) => {
+    
+    return pulsi_model.findOneAndUpdate(
+      { 
+      pulsi_ID: pulsi_ID 
+      }, 
+      {
+        $push: {
+          raw_data:{ $each : raw_data},
+          processed_data: {$each: processed_data},
+        }
+      }, {
+        new: true,
+        runValidators: true,
+      }).exec()
 
   },
 
