@@ -2,7 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface IRawData extends Document {
     timestamp: Date;
-    raw_data: string;
+    IR_signal: number,
+    Red_signal : number;
 }
 
 interface IProcessedData extends Document {
@@ -12,14 +13,20 @@ interface IProcessedData extends Document {
 }
 
 const raw_data_schema = new mongoose.Schema({
-    timestamp: { type: Date, default: Date.now },
-    raw_data: { type: String, required: true },
-});
+  timestamp: { type: Date, default: Date.now },
+  IR_signal: { type: Number, required: true },
+  Red_signal: { type: Number, required: true },
+}, 
+{_id: false}
+);
 
-const processed_data_schema = new mongoose.Schema({
+const processed_data_schema = new mongoose.Schema(
+  {
     timestamp: { type: String, default: Date.now },
     oxygen_level: { type: Number, required: true },
     pulse_rate: { type: Number, required: true },
-});
+  },
+  { _id: false }
+);
 
 export { raw_data_schema, processed_data_schema, IRawData, IProcessedData };

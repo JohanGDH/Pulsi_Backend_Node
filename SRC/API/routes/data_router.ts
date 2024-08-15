@@ -1,10 +1,13 @@
-import express, { Request, Response, Router } from "express";
+import express, { Router } from "express";
 
 import { controller as dataController } from "../controllers/data_controller";
+import commonErrorHandler from "../middleware/common_error_handler";
 
 const dataRouter: Router = express.Router();
 
 // Rutas para la entidad Data
-dataRouter.post("/data", dataController.createData);
+dataRouter.get("/", dataController.getData)
+dataRouter.post("/", dataController.createData);
+dataRouter.put("/", dataController.addData);
 
 export default dataRouter;

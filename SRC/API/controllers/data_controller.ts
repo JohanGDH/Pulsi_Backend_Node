@@ -6,17 +6,15 @@ import  {    raw_data_schema,
             IRawData, 
             IProcessedData 
         }   from '../models/data_model';
-import { pulsi_model } from '../models/pulsi_model';
-import { nextTick } from "process";
+import { IPulsi, pulsi_model } from '../models/pulsi_model';
 
 // Función de validación
 const validateParams = (params: any): boolean => {
   return (
     params &&
-    typeof params.pulsi_ID === 'string' &&
-    typeof params.raw_data === 'string' &&
-    typeof params.processed_data === 'string' &&
-    typeof params.timestamp === 'string' // O el tipo que corresponda, por ejemplo, 'number' si es un timestamp numérico
+    typeof params.pulsi_ID === "string" &&
+    typeof params.raw_data === "object" &&
+    typeof params.processed_data === "object"
   );
 };
         
@@ -24,10 +22,26 @@ const validateParams = (params: any): boolean => {
 const controller = {
   // Define your controller methods
   getData: (req: Request, res: Response, next: NextFunction) => {
-    // Implement your logic to fetch data from the database or any other source
-    // const data = DataModel.find();
-    // Return the data as a response
-    // res.json(data);
+    
+    const pulsi_ID = req.body.pulsi_ID;
+
+    pulsi_model.findOne({ pulsi_ID: pulsi_ID })
+      .then((pulsi: IPulsi | null) => {
+        if(!pulsi || (pulsi.raw_data.length == 0 && pulsi.processed_data.length == 0)) {
+          return res.status(404).send({ message: "No se han encontrado los datos" });
+        }
+
+        return res.status(200).send({
+          raw_data: pulsi.raw_data,
+          processed_data: pulsi.processed_data,
+          message: "Datos obtenidos correctamente",
+        });
+
+      })
+      .catch((err) => {
+        next(err);
+      });
+
   },
 
   createData: (req: Request, res: Response, next: NextFunction) => {
@@ -53,11 +67,49 @@ const controller = {
       });
   },
 
-  updateData: (req: Request, res: Response, next: NextFunction) => {
-    // Implement your logic to update existing data
-    // const updatedData = DataModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    // Return the updated data as a response
-    // res.json(updatedData);
+  addData: (req: Request, res: Response, next: NextFunction) => {
+    
+    const params = req.body;
+
+
+    if(!validateParams(params)) {
+      return res.status(400).send({ message: "Los datos del pulsi son requeridos" });
+    }
+
+
+    pulsi_model.findOneAndUpdate({ 
+      pulsi_ID: params.pulsi_ID 
+    }, {
+      $push: {
+        raw_data:{ $each :params.raw_data},
+        processed_data: {$each: params.processed_data},
+      }
+    }, {
+      new: true,
+      runValidators: true,
+    })
+      .then((updatedPulsi: IPulsi | any) => {
+        
+        if (!updatedPulsi) {
+          return res
+            .status(404)
+            .send({ message: "No se ha encontrado el pulsi a actualizar" });
+        }
+
+        const lastTwoRawData = updatedPulsi.raw_data.slice(-2); // Obtener los dos últimos elementos del array
+        const lastTwoProcessedData = updatedPulsi.processed_data.slice(-2); // Obtener los dos últimos elementos del array
+
+        res.status(200).send({
+          pulsiID: updatedPulsi.pulsi_ID,
+          lastRawData: lastTwoRawData,
+          lastProcessedData: lastTwoProcessedData,
+          message: "Datos actualizados correctamente",
+        });
+      })
+      .catch((err) => {
+        next(err);
+    })
+
   },
 
   deleteData: (req: Request, res: Response, next: NextFunction) => {
@@ -70,4 +122,4 @@ const controller = {
 
 
 // Export your controller methods
-export { controller}
+export { controller }

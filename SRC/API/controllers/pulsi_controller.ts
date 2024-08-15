@@ -11,7 +11,7 @@ const controller = {
         pulsi_model.find({}).sort('+pulsi_ID')
             .then((pulsis: IPulsi[]) => {
                 
-                if(!pulsis) return res.status(404).send({ message: "No hay pulsis que listar"});
+                if(!pulsis || (pulsis.length == 0)) return res.status(404).send({ message: "No hay pulsis que listar"});
                 
                 res.status(200).send({
 
@@ -55,6 +55,7 @@ const controller = {
             
 
             const new_pulsi = new pulsi_model();
+            console.log(req.body);
             const params: any = req.body;
 
             new_pulsi.pulsi_ID = params.pulsi_ID;
@@ -71,7 +72,9 @@ const controller = {
                       pulsi,
                       message: "Pulsi guardado correctamente",
                     });
-                    mqtt_client.subscribeToTopic(pulsi.pulsi_ID);
+
+                    // Conexión al pulsi mediante MQTT
+                    // mqtt_client.subscribeToTopic(pulsi.pulsi_ID);
                 })
                 .catch((err) => {
                     next(err);
