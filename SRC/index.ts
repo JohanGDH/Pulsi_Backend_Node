@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from "mongoose";
 
 import app from "./app";
+import simulatePulsi from './API/tests/pulsi_simulator';
 
 
 const port = 3030;
@@ -16,9 +17,10 @@ app.use(express.json());
 mongoose
   .connect(url)
   .then(() => {
-    console.log("Conectado a la base de datos de MongoDB");
+    console.log("- Conectado a la base de datos de MongoDB\n//////////////////////////////////////////////////////////////// \n");
 
-
+    // Simulación de un pulsi
+    simulatePulsi();
   })
   .catch((err:any) => {
     console.error("Error al conectar a la base de datos", err);
@@ -31,6 +33,9 @@ mongoose
 
   // Inicia el servidor
   app.listen(port, () => {
-    console.log(`Servidor escuchando en http://localhost:${port}`);
+    console.log(
+      `\n//////////////////////////////////////////////////////////////// \n- Servidor inicializado y escuchando en http://localhost:${port}`
+    );
   });
+
 

@@ -55,7 +55,6 @@ const controller = {
             
 
             const new_pulsi = new pulsi_model();
-            console.log(req.body);
             const params: any = req.body;
 
             new_pulsi.pulsi_ID = params.pulsi_ID;
@@ -70,11 +69,14 @@ const controller = {
                 .then((pulsi: IPulsi) => {
                     res.status(200).send({
                       pulsi,
-                      message: "Pulsi guardado correctamente",
+                      message: `Pulsi ${pulsi['pulsi_ID']} guardado correctamente`,
                     });
 
                     // Conexión al pulsi mediante MQTT
-                    // mqtt_client.subscribeToTopic(pulsi.pulsi_ID);
+                    mqtt_client.publishMessage(pulsi.pulsi_ID, {
+                      message: `Conexión inicializada con el pulsi: ${pulsi.pulsi_ID}`,
+                    });
+                    mqtt_client.subscribeToTopic(pulsi.pulsi_ID);
                 })
                 .catch((err) => {
                     next(err);

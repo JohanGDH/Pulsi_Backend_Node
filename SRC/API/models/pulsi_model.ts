@@ -16,14 +16,13 @@ interface DataBuffer {
 }
 
 const pulsi_schema = new mongoose.Schema({
-  _id: { type: String, required: false},
   pulsi_ID: { type: String, required: true },
   raw_data: { type: [raw_data_schema], required: false},
   processed_data:{ type: [processed_data_schema], required: false},
   timestamp: { type: Date, default: Date.now, required: false },
 }, {
   collection: "pulsis",
-  _id: false
+  _id: true
 });
 
 const pulsi_model = mongoose.model<IPulsi>("pulsi", pulsi_schema);
